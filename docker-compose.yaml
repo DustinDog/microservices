@@ -1,0 +1,36 @@
+version: python:bullseye
+services:
+  db:
+    image: postgres:latest
+    restart: always
+    networks:
+      - main
+    volumes:
+      - postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_DB=postgres
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_USER=postgres
+
+  web:
+    build: .
+    entrypoint: account_service/entrypoint.sh
+    ports:
+      - "8000:8000"
+    networks:
+      - main
+    depends_on:
+      - db
+    volumes:
+      - .:/code
+    command: python account_service/manage.py runserver 0.0.0.0:8000
+    container_name: api
+
+volumes:
+  web:
+  postgres_data:
+networks:
+  main:
+    name: main
