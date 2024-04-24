@@ -33,7 +33,7 @@ class LoginView(TokenObtainPairView):
     serializer_class = TokenObtainPairSerializer
 
 
-class UserDetail(generics.RetrieveUpdateDestroyAPIView):
+class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
     serializer_class = UserSerializer
     permission_classes = [IsAuthenticated]
