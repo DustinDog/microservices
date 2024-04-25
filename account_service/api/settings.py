@@ -47,6 +47,7 @@ PROJECT_APPS = [
 THIRD_PARTY_APPS = [
     "rest_framework",
     "rest_framework_simplejwt",
+    "rest_framework_simplejwt.token_blacklist",
     "drf_spectacular",
 ]
 
@@ -83,7 +84,7 @@ TEMPLATES = [
 WSGI_APPLICATION = "api.wsgi.application"
 
 SIMPLE_JWT = {
-    "ACCESS_TOKEN_LIFETIME": timedelta(minutes=180),
+    "ACCESS_TOKEN_LIFETIME": timedelta(days=180),
     "REFRESH_TOKEN_LIFETIME": timedelta(days=50),
     "ROTATE_REFRESH_TOKENS": True,
     "BLACKLIST_AFTER_ROTATION": True,
