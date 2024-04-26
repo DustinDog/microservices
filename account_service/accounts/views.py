@@ -1,16 +1,21 @@
 from accounts.models import User
-from accounts.serializers import CreateUserSerializer, UserSerializer
+from accounts.serializers import (
+    CreateUserSerializer,
+    BaseUserSerializer,
+    UpdateUserSerializer,
+)
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework import status
 
 
 class UserList(generics.ListAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = BaseUserSerializer
 
 
 class CreateUser(generics.CreateAPIView):
@@ -37,5 +42,29 @@ class LoginView(TokenObtainPairView):
 
 class UserDetail(generics.RetrieveAPIView):
     queryset = User.objects.all()
-    serializer_class = UserSerializer
+    serializer_class = BaseUserSerializer
     permission_classes = [IsAuthenticated]
+
+
+class UserUpdate(generics.UpdateAPIView):
+    queryset = User.objects.all()
+    serializer_class = UpdateUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def update(self, request, *args, **kwargs):
+        user = request.user
+        serializer = self.get_serializer(user, data=request.data, partial=True)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
+class UserDelete(generics.DestroyAPIView):
+    queryset = User.objects.all()
+    serializer_class = BaseUserSerializer
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, *args, **kwargs):
+        user = request.user
+        user.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)
